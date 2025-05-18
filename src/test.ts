@@ -49,7 +49,7 @@ export function withSupawright<
       try {
         supawright = await Supawright.new(schemas, supawrightOptions)
       } catch (error) {
-        throw new Error(`Supawright teardown failed: ${error instanceof Error ? error.message : String(error)}`)
+        throw new Error(`Supawright teardown failed.`, { cause: error })
       }
       
       try {
@@ -60,8 +60,8 @@ export function withSupawright<
       } finally {
         try {
           await supawright.teardown()
-        } catch (teardownError) {
-          throw new Error(`Supawright teardown failed: ${teardownError instanceof Error ? teardownError.message : String(teardownError)}`)
+        } catch (error) {
+          throw new Error(`Supawright teardown failed.`, { cause: error })
         }
       }
     }
