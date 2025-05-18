@@ -305,7 +305,9 @@ export class Supawright<
       schemas.unshift('auth' as Schema)
     }
     for (const schema of schemas) {
-      for (const table of Object.keys(this.tables[schema]) as TableIn<
+      if (!this.tables[schema]) continue;
+      
+      for (const table of Object.keys(this.tables[schema] || {}) as TableIn<
         Database,
         Schema
       >[]) {

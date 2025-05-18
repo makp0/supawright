@@ -416,7 +416,9 @@ var Supawright = class _Supawright {
       schemas.unshift("auth");
     }
     for (const schema of schemas) {
-      for (const table of Object.keys(this.tables[schema])) {
+      if (!this.tables[schema])
+        continue;
+      for (const table of Object.keys(this.tables[schema] || {})) {
         const key = `${schema}.${table}`;
         if (!dependents[key]) {
           dependents[key] = {};
