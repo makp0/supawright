@@ -104,10 +104,16 @@ export class Supawright<
     if (!schemas.length) {
       throw new Error('No schemas provided')
     }
+    
     const [tables, enums] = await Promise.all([
-      getSchemaTree(schemas, options?.database),
-      getEnums(schemas, options?.database)
+      getSchemaTree(schemas, options?.database).catch(e => {
+        throw new Error(`Failed to get schema tree: ${e.message}`)
+      }),
+      getEnums(schemas, options?.database).catch(e => {
+        throw new Error(`Failed to get enums: ${e.message}`)
+      })
     ])
+    
     return new Supawright(schemas, tables, enums, options)
   }
 

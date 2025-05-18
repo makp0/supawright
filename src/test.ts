@@ -44,12 +44,26 @@ export function withSupawright<
   }>({
     supawright: async ({ page }, use) => {
       const { beforeTeardown, ...supawrightOptions } = options ?? {}
-      const supawright = await Supawright.new(schemas, supawrightOptions)
-      await use(supawright)
-      if (beforeTeardown) {
-        await beforeTeardown({ supawright, page })
+      let supawright: Supawright<Database, Schema>
+      
+      try {
+        supawright = await Supawright.new(schemas, supawrightOptions)
+      } catch (error) {
+        throw new Error(`Supawright teardown failed: ${error instanceof Error ? error.message : String(error)}`)
       }
-      await supawright.teardown()
+      
+      try {
+        await use(supawright)
+        if (beforeTeardown) {
+          await beforeTeardown({ supawright, page })
+        }
+      } finally {
+        try {
+          await supawright.teardown()
+        } catch (teardownError) {
+          throw new Error(`Supawright teardown failed: ${teardownError instanceof Error ? teardownError.message : String(teardownError)}`)
+        }
+      }
     }
   })
 }
