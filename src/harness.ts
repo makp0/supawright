@@ -107,10 +107,10 @@ export class Supawright<
     
     const [tables, enums] = await Promise.all([
       getSchemaTree(schemas, options?.database).catch(e => {
-        throw new Error(`Failed to get schema tree: ${e.message}`)
+        throw new Error(`Failed to get schema tree`, { cause: e })
       }),
       getEnums(schemas, options?.database).catch(e => {
-        throw new Error(`Failed to get enums: ${e.message}`)
+        throw new Error(`Failed to get enums`, { cause: e })
       })
     ])
     

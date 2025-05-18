@@ -49,7 +49,7 @@ export function withSupawright<
       try {
         supawright = await Supawright.new(schemas, supawrightOptions)
       } catch (error) {
-        throw new Error(`Supawright teardown failed.`, { cause: error })
+        throw new Error(`Supawright teardown failed`, { cause: error })
       }
       
       try {
@@ -61,7 +61,7 @@ export function withSupawright<
         try {
           await supawright.teardown()
         } catch (error) {
-          throw new Error(`Supawright teardown failed.`, { cause: error })
+          throw new Error(`Supawright teardown failed`, { cause: error })
         }
       }
     }
