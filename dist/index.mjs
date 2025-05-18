@@ -677,7 +677,7 @@ function withSupawright(schemas, options) {
       try {
         supawright = await Supawright.new(schemas, supawrightOptions);
       } catch (error) {
-        throw new Error(`Supawright teardown failed: ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(`Supawright teardown failed.`, { cause: error });
       }
       try {
         await use(supawright);
@@ -687,8 +687,8 @@ function withSupawright(schemas, options) {
       } finally {
         try {
           await supawright.teardown();
-        } catch (teardownError) {
-          throw new Error(`Supawright teardown failed: ${teardownError instanceof Error ? teardownError.message : String(teardownError)}`);
+        } catch (error) {
+          throw new Error(`Supawright teardown failed.`, { cause: error });
         }
       }
     }
