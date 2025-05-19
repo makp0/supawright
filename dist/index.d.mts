@@ -145,13 +145,10 @@ type ExtensionOptions<Database extends GenericDatabase, Schema extends SchemaOf<
         supawright: Supawright<Database, Schema>;
         page: Page;
     }) => Promise<void>;
-    beforeAll?: ((params: {
+    beforeAll?: (params: {
         supawright: Supawright<Database, Schema>;
         page: Page;
-    }) => Promise<void> | void) | Array<(params: {
-        supawright: Supawright<Database, Schema>;
-        page: Page;
-    }) => Promise<void> | void>;
+    }) => Promise<void> | void;
 };
 /**
  * Factory for a test extension that provides a Supawright harness

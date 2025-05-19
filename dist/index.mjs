@@ -685,13 +685,7 @@ function withSupawright(schemas, options) {
       try {
         if (!beforeAllHasRun && beforeAll) {
           beforeAllHasRun = true;
-          if (Array.isArray(beforeAll)) {
-            for (const fn of beforeAll) {
-              await fn({ supawright, page });
-            }
-          } else {
-            await beforeAll({ supawright, page });
-          }
+          await beforeAll({ supawright, page });
         }
         await use(supawright);
         if (beforeTeardown) {
