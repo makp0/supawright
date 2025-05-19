@@ -672,16 +672,27 @@ var Supawright = class _Supawright {
 
 // src/test.ts
 function withSupawright(schemas, options) {
+  let beforeAllHasRun = false;
   return test.extend({
     supawright: async ({ page }, use) => {
-      const { beforeTeardown, ...supawrightOptions } = options ?? {};
+      const { beforeTeardown, beforeAll, ...supawrightOptions } = options ?? {};
       let supawright;
       try {
         supawright = await Supawright.new(schemas, supawrightOptions);
       } catch (error) {
-        throw new Error(`Supawright teardown failed`, { cause: error });
+        throw new Error(`Supawright setup failed`, { cause: error });
       }
       try {
+        if (!beforeAllHasRun && beforeAll) {
+          beforeAllHasRun = true;
+          if (Array.isArray(beforeAll)) {
+            for (const fn of beforeAll) {
+              await fn({ supawright, page });
+            }
+          } else {
+            await beforeAll({ supawright, page });
+          }
+        }
         await use(supawright);
         if (beforeTeardown) {
           await beforeTeardown({ supawright, page });

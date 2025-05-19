@@ -18,6 +18,7 @@ type ExtensionOptions<
     supawright: Supawright<Database, Schema>
     page: Page
   }) => Promise<void>
+  beforeAll?: (params: { supawright: Supawright<Database, Schema>, page: Page }) => Promise<void> | void
 }
 
 /**
@@ -39,20 +40,25 @@ export function withSupawright<
     },
   PlaywrightWorkerArgs & PlaywrightWorkerOptions
 > {
+  let beforeAllHasRun = false;
   return test.extend<{
     supawright: Supawright<Database, Schema>
   }>({
     supawright: async ({ page }, use) => {
-      const { beforeTeardown, ...supawrightOptions } = options ?? {}
+      const { beforeTeardown, beforeAll, ...supawrightOptions } = options ?? {}
       let supawright: Supawright<Database, Schema>
       
       try {
         supawright = await Supawright.new(schemas, supawrightOptions)
       } catch (error) {
-        throw new Error(`Supawright teardown failed`, { cause: error })
+        throw new Error(`Supawright setup failed`, { cause: error })
       }
       
       try {
+        if (!beforeAllHasRun && beforeAll) {
+          beforeAllHasRun = true;
+          await beforeAll({ supawright, page })
+        }
         await use(supawright)
         if (beforeTeardown) {
           await beforeTeardown({ supawright, page })
